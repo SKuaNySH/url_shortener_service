@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: user
-    password: password
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:postgres}
+    username: ${DB_USERNAME:user}
+    password: ${DB_PASSWORD:password}
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -17,9 +17,45 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
 server:
-  port: 8080
+  port: 8095
 
 logging:
   level:
     root: info
+
+hash:
+  insert-batch-size: 100
+  delete-batch-size: 10
+  cache:
+    key: urlshortener:hash_cache
+    ttl: 7
+
+url:
+  delete:
+    cron: "30 39 21 * * ?"
+  cache:
+    key: url_cache
+  prefix: ${URL_PREFIX:http://127.0.0.1:8095}
+
+base62:
+  chars: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+numbers:
+  count: 1000
+
+executor:
+  pool:
+    size: 10
+  queue:
+    size: 100
+  prefix: "url-shortener-"
+
+cache:
+  size: 1000
+  refillPercent: 0.2
+  attemptsCount: 3
